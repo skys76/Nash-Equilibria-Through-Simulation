@@ -32,25 +32,27 @@ with open (sys.argv[1]) as file:
         current_line = line
         if current_line[0] == "#":
             continue
-        #basically trying to eliminate the only letter and only string lines. 
-        #but it's not working 
-        #----------------------------------------------------------
-        if re.match(r'^([\s\d]+)$', current_line):
+        #set the all digit line as the number of options
+        pattern_digits = r"^[0-9 ]+$"
+        if re.match(pattern_digits, current_line):
             num_options = int(current_line)
-        if re.match(r'^([\sa-zA-Z]+)$', current_line):
+            continue
+        #set the all letter line as the name of the game
+        pattern_letters = r"^[a-zA-Z ]+$"
+        if re.match(pattern_letters, current_line):
             game_name = current_line
-        #-------------------------------------------------------------
+            continue
         else:
             row = parse_matrix_line(current_line)
             payoff_matrix.append(row)
-
-
 
 #idk testing stuff
 print("name:", game_name)
 print("num_options:", num_options)
 print("payoff matrix: ")
 print(payoff_matrix)
+
+
         
 
 
