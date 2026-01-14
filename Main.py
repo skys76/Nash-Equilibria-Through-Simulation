@@ -1,10 +1,12 @@
 import sys
 import re
+
 #parsing the text file 
 payoff_matrix = []
 num_options = 0
 game_name = ""
 
+#helper method for creating the payoff matrix
 def parse_matrix_line(line):
     banned_chars= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:'"
     for char in line:
@@ -24,6 +26,7 @@ def parse_matrix_line(line):
         pair_list.append((first, second))
     return pair_list
 
+#parsing file and creating payoff matrix
 with open (sys.argv[1]) as file: 
     for line in file: 
         current_line = line
@@ -31,15 +34,19 @@ with open (sys.argv[1]) as file:
             continue
         #basically trying to eliminate the only letter and only string lines. 
         #but it's not working 
+        #----------------------------------------------------------
         if re.match(r'^([\s\d]+)$', current_line):
             num_options = int(current_line)
         if re.match(r'^([\sa-zA-Z]+)$', current_line):
             game_name = current_line
+        #-------------------------------------------------------------
         else:
             row = parse_matrix_line(current_line)
             payoff_matrix.append(row)
 
-    
+
+
+#idk testing stuff
 print("name:", game_name)
 print("num_options:", num_options)
 print("payoff matrix: ")
