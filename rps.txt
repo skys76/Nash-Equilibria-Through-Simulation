@@ -1,0 +1,5 @@
+3
+#also doesn't work. 4 for 4, deadass. there is no clear convergence to any strat. 
+row: 0 0 -1 1 1 -1
+row two: 1 -1 0 0 -1 1
+row three: -1 1 1 -1 0 0 

@@ -1,0 +1,4 @@
+2
+#again, only going to one of the two equilibria
+row: 3 2 0 0
+row two: 0 0 2 3

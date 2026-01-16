@@ -23,6 +23,8 @@ class Player:
         return self.average_score
     def get_current_strat(self):
         return self.current_strat
+    def get_name(self):
+        return self.name
     
     #FIRST updating stuff after one round
     def update_round(self, round_score):
@@ -32,25 +34,24 @@ class Player:
 
     #SECOND update the preferences 
     def update_prefs(self):
-        #three cases
-        delta_pref = .01
-        delta_remove = delta_pref/(self.num_options - 1)
-
-        #current score is greater than the average = win 
-        if self.current_score > self.average_score:
+        change = (self.current_score - self.average_score)/100
+        for i in range(len(self.prefs)):
+            if i == self.current_strat:
+                self.prefs[i] = self.prefs[i] + change
+            else: 
+                self.prefs[i] = self.prefs[i] - change/(self.num_options - 1)
+                
+            if self.prefs[i] > 1:
+                self.prefs[i] = 1
+            if self.prefs[i] < 0:
+                self.prefs[i] = 0
+        #current score is less than the average = loss (MAYBE--TRY WITHOUT)
+        """if self.current_score  < self.average_score:
             for i in range(len(self.prefs)):
                 if i == self.current_strat:
-                    self.prefs[i] = self.prefs[i] + delta_pref
+                    self.prefs[i] = self.prefs[i] - change
                 else: 
-                    self.prefs[i] = self.prefs[i] - delta_remove
-        #current score is less than the average = loss 
-        if self.current_score  < self.average_score:
-            for i in range(len(self.prefs)):
-                if i == self.current_strat:
-                    self.prefs[i] = self.prefs[i] - delta_pref
-                else: 
-                    self.prefs[i] = self.prefs[i] + delta_remove
-        #current score is equal to the average = do nothing 
+                    self.prefs[i] = self.prefs[i] + change/(self.num_options - 1)"""
     
     #THIRD update the average 
     def update_average (self):
@@ -59,7 +60,6 @@ class Player:
     #FOURTH choose a new current strat
     def update_strat (self):
         num = random.random()
-        print("random number is: ", num)
         sum = 0
         for i in range (len(self.prefs)):
             if sum < num and num < sum + self.prefs[i]:
@@ -72,4 +72,7 @@ class Player:
         self.update_round(score)
         self.update_prefs()
         self.update_average()
+        self.update_strat()
+
+    def play_default(self):
         self.update_strat()

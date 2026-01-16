@@ -1,5 +1,6 @@
 import sys
 import re
+from Player import Player
 
 #parsing the text file 
 payoff_matrix = []
@@ -52,8 +53,31 @@ print("num_options:", num_options)
 print("payoff matrix: ")
 print(payoff_matrix)
 
+#making all the players 
+players = []
+for i in range (10):
+    name = i
+    players.append(Player(name, num_options))
 
+def round_robin(players, payoff):
+    p2_index = 1
+    for p1 in players: 
+        for j in range (p2_index, len(players)):
+            p2 = players[p2_index]
+            cell = payoff[p2.get_current_strat()][p1.get_current_strat()]
+            p1.play(int(cell[0]))
+            p2.play(int(cell[1]))
+        if p2_index < len(players):
+            p2_index = p2_index + 1
+        else: 
+            break
+    
+def simulate ():
+    trials = 5000
+    for i in range (trials):
+        round_robin(players, payoff_matrix)
+    for i in range (len(players)):
+        print(players[i].get_prefs())
+simulate()
         
-
-
 
