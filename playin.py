@@ -1,4 +1,4 @@
-import random
+"""import random
 class Player:
     def __init__(self, name, num_options):
         self.name = name
@@ -76,3 +76,4 @@ class Player:
         self.update_prefs()
         self.update_average()
         self.update_strat()
+"""
