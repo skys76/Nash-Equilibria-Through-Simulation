@@ -4,6 +4,7 @@ class Player:
         self.name = name
         self.num_options = num_options
         self.current_score = 0
+        self.alt_score = 0
         self.total_score = 0
         self.average_score = 0
         self.rounds_played = 0
@@ -25,33 +26,33 @@ class Player:
         return self.current_strat
     def get_name(self):
         return self.name
+    def get_rounds_played(self):
+        return self.rounds_played
+    def get_alt_score(self):
+        return self.alt_score
     
     #FIRST updating stuff after one round
-    def update_round(self, round_score):
+    def update_round(self, round_score, alt_score):
         self.current_score = round_score
         self.rounds_played = self.rounds_played + 1
         self.total_score = self.total_score + round_score
+        self.alt_score = alt_score
 
     #SECOND update the preferences 
     def update_prefs(self):
-        change = (self.current_score - self.average_score)/100
+        change = self.alt_score - self.current_score
         for i in range(len(self.prefs)):
             if i == self.current_strat:
-                self.prefs[i] = self.prefs[i] + change
+                self.prefs[i]-= change * .01
             else: 
-                self.prefs[i] = self.prefs[i] - change/(self.num_options - 1)
+                self.prefs[i] += (change * .01)/(self.num_options - 1)
                 
+        for i in range(len(self.prefs)): 
             if self.prefs[i] > 1:
                 self.prefs[i] = 1
-            if self.prefs[i] < 0:
+            elif self.prefs[i] < 0:
                 self.prefs[i] = 0
-        #current score is less than the average = loss (MAYBE--TRY WITHOUT)
-        """if self.current_score  < self.average_score:
-            for i in range(len(self.prefs)):
-                if i == self.current_strat:
-                    self.prefs[i] = self.prefs[i] - change
-                else: 
-                    self.prefs[i] = self.prefs[i] + change/(self.num_options - 1)"""
+        #print(self.name, self.prefs)
     
     #THIRD update the average 
     def update_average (self):
@@ -66,13 +67,12 @@ class Player:
                 self.current_strat = i
                 break 
             sum = sum + self.prefs[i]
+
+
     
     #cleaning it up
-    def play (self, score):
-        self.update_round(score)
+    def play (self, score, alt_score):
+        self.update_round(score, alt_score)
         self.update_prefs()
         self.update_average()
-        self.update_strat()
-
-    def play_default(self):
         self.update_strat()

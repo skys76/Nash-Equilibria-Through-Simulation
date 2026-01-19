@@ -1,5 +1,3 @@
 2
-#converging to first choice for both--it isn't wrong based on how the 
-#preferences are updated, but there are two nash equilibria 
 row: 3 3 0 2
 row two: 2 0 1 1
