@@ -127,11 +127,9 @@ Args: N/A
 Returns: N/A
 """
 def simulate ():
-    trials = 50
+    trials = 100
     for i in range (trials):
         round_robin(players, payoff_matrix)
-    for i in range (len(players)):
-        print(players[i].get_prefs())
         
 """
 def create_plot(p1_data, p2_data, p1_name, p2_name): plots the player's preferences over time using the 
@@ -197,14 +195,15 @@ def create_plot(p1_data, p2_data, p1_name, p2_name):
 #running the 2250 rounds 
 simulate()
 #choosing two of the the ten player's whoes preferences will be graphed
-p1 = 0
-p2 = 0
-while p1 == p2: 
-    p1 = random.randint(0, len(players)-1)
-    p2 = random.randint(0, len(players)-1)
-    p1_name = f"player {p1+1}"
-    p2_name = f"player {p2+1}"
-#plot the chosen's player's preferences 
-create_plot(players[p1].get_all_prefs()[0], players[p2].get_all_prefs()[0], p1_name, p2_name)
+for i in range (5):
+    p1 = 0
+    p2 = 0
+    while p1 == p2: 
+        p1 = random.randint(0, len(players)-1)
+        p2 = random.randint(0, len(players)-1)
+        p1_name = f"player {p1+1}"
+        p2_name = f"player {p2+1}"
+    #plot the chosen's player's preferences 
+    create_plot(players[p1].get_all_prefs()[0], players[p2].get_all_prefs()[0], p1_name, p2_name)
 
 
