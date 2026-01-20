@@ -1,5 +1,0 @@
-I found that playing with the "rate" at which the preferences update causes different 
-convergence behavior. For example, with the stag and hare game, when the rate was at 
-.01 and the sims were at 1000, I got both [0, 1] and [1, 0] convergence pretty consistently. 
-However, when the "rate" was at .005 and the sims were are 3000, I kept getting [1, 0]. 
-Unfortunately, at .01, the strats converge really fast, which is kinda boring. 

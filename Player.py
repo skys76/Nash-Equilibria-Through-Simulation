@@ -1,3 +1,7 @@
+"""
+Class: Player (self, name, num_options): creates a player object which plays against opponents in a 2 X 2 game. 
+The player is able to learn strategies which gravitate towards the game's Nash equilibrium by updating their preferences 
+for strategies based on the outcome of a single game."""
 import random
 class Player:
     def __init__(self, name, num_options):
@@ -15,6 +19,7 @@ class Player:
             self.prefs.append(1/num_options)
         self.all_prefs = [[], []]
 
+    #getter methods 
     def get_prefs(self):
         return self.prefs
     def get_current_score(self):
@@ -34,14 +39,32 @@ class Player:
     def get_all_prefs(self): 
         return self.all_prefs
     
-    #FIRST updating stuff after one round
+    """
+  def update_round(self, round_score, alt_score): updates player's stats "after" a game is played (really there is no game being played, 
+  by the player recives a score as if it is, so.)
+
+  Args: 
+    round_score: payoff from the current round 
+    alt_score: while maintaining the opponent's chosen strategy, what score could the player have gotten if they played the strategy they 
+    didn't choose?
+
+    Returns: N/A
+"""
+    #FIRST 
     def update_round(self, round_score, alt_score):
         self.current_score = round_score
         self.rounds_played = self.rounds_played + 1
         self.total_score = self.total_score + round_score
         self.alt_score = alt_score
 
-    #SECOND update the preferences 
+    """
+    def update_prefs(self): updates preferences (which are in the form of probabilities) based on how much the player regrets using their 
+    current strategy in the previous game. 
+    
+    Args: N/A
+    
+    Returns: N/A"""
+    #SECOND 
     def update_prefs(self):
         change = self.alt_score - self.current_score
         for i in range(len(self.prefs)):
@@ -56,13 +79,24 @@ class Player:
             elif self.prefs[i] < 0:
                 self.prefs[i] = 0
             self.all_prefs[i].append(self.prefs[i])
-        #print(self.name, self.prefs)
     
-    #THIRD update the average 
+    """def update_average(self): updates the player's average score
+    
+    Args: N/a
+    
+    Returns: N/a"""
+    #THIRD 
     def update_average (self):
         self.average_score = self.total_score / self.rounds_played
     
-    #FOURTH choose a new current strat
+    """
+    def update_strat(self): A random number between 0 and 1 is chosen. Since the player's preferences for strategies are stored 
+    as probabilities, the random number is used to determine which strategy will be played next round.
+    
+    Args: N/A
+    
+    Returns: N/A"""
+    #FOURTH 
     def update_strat (self):
         num = random.random()
         sum = 0
@@ -77,7 +111,17 @@ class Player:
             for j in range(len(self.all_prefs[i])):
                 self.all_prefs[i][j] = round(self.all_prefs[i][j], 2)
     
-    #cleaning it up
+    """
+    def play(self, score, alt_score): preforms all of the above methods in the correct order. 
+    
+    Args: 
+        score: the payoff from playing one round using the player's current strategy 
+        alt_score: 
+        alt_score: while maintaining the opponent's chosen strategy, what score could the player have gotten if they played the strategy they 
+        didn't choose?
+    
+    Returns: N/A
+"""
     def play (self, score, alt_score):
         self.update_round(score, alt_score)
         self.update_prefs()

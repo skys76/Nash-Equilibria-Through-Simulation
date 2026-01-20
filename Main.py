@@ -1,19 +1,46 @@
+"""Project: Nash Equilibria Through Simulation
+    
+Author: Sky Stankevich 
+Date: 1/20/2026
+
+AI Usage: 
+    ChatGPT was asked: 
+        "how do different payoff matrices effect the convergence onto
+        a Nash Equilibrium in the Stag and Hare game?"
+        "explain regret-based learning" 
+        "how could you use regret-based learning to reach a Nash equilibrium?" 
+
+    Sources: None
+"""
 import sys
 import re
 import random
 import matplotlib.pyplot as plt
 from Player import Player
 
-#parsing the text file 
 payoff_matrix = []
 num_options = 0
 game_name = ""
+options = []
 
-#helper method for creating the payoff matrix
+
+"""
+def parse_matrix_line(line): when given a line read from a text file containing both letters and numbers, 
+the method strips all letters from the string and seperates the numbers into a payoff matrix. 
+
+Args: 
+    line: string read from text file 
+Returns: 
+    pair_list: list returning the pairs of payoff scores read from the given line. This represents 
+    one row of the payoff matrix. 
+    start_string: the name of the option represented by the returned row in the payoff matrix 
+"""
 def parse_matrix_line(line):
     banned_chars= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:'"
+    start_string = ""
     for char in line:
         if char in banned_chars: 
+            start_string = start_string + char
             line = line.replace(char, "")
     string_list = line.split(" ")
     clean_list = []
@@ -27,41 +54,55 @@ def parse_matrix_line(line):
         first = clean_list[i]
         second = clean_list[i+1]
         pair_list.append((first, second))
-    return pair_list
+    return pair_list, start_string
 
 #parsing file and creating payoff matrix
+#opening text file
 with open (sys.argv[1]) as file: 
     for line in file: 
         current_line = line
+        #ignoring comments
         if current_line[0] == "#":
             continue
-        #set the all digit line as the number of options
+        #line containing only digits set as the number of options
         pattern_digits = r"^[0-9 ]+$"
         if re.match(pattern_digits, current_line):
             num_options = int(current_line)
             continue
-        #set the all letter line as the name of the game
-        pattern_letters = r"^[a-zA-Z ]+$"
+        #line containing all letters set as the name of the game
+        pattern_letters = r"^[a-zA-Z' ]+$"
         if re.match(pattern_letters, current_line):
             game_name = current_line
             continue
+        #line containing both letters and numbers decoded by the helped "parse_matrix_line" method
         else:
-            row = parse_matrix_line(current_line)
+            row = parse_matrix_line(current_line)[0]
+            options.append(parse_matrix_line(current_line)[1])
             payoff_matrix.append(row)
 
-#idk testing stuff
-print("name:", game_name)
-print("num_options:", num_options)
-print("payoff matrix: ")
+#logging the game info 
+print("Game name:", game_name)
+print("Number of options:", num_options)
+print("Moves: ", options[0], ", ", options[1])
+print("Payoff Matrix: ")
 print(payoff_matrix)
 
-#making all the players 
+#make a list of players for the round robin using the Player class
 players = []
 for i in range (10):
     name = i
     players.append(Player(name, num_options))
 
-#round robin 
+"""
+def round_robin(players, payoff): plays 45 games (1 round) using the players from the passed
+list.
+Args: 
+    players: list of players in the round robin. Players' preferences remain no matter who they 
+    play. 
+    payoff: payoff matrix of the game, read from the text file.
+Returns: 
+    N/A
+"""
 def round_robin(players, payoff):
     p2_index = 1
     for p1 in players: 
@@ -79,16 +120,31 @@ def round_robin(players, payoff):
         else: 
             break
 
-#running the simulations  
+"""
+def simulate(): uses the round_robin method to run 50 rounds of gameplay. 
+
+Args: N/A
+Returns: N/A
+"""
 def simulate ():
-    trials = 1000
+    trials = 50
     for i in range (trials):
         round_robin(players, payoff_matrix)
     for i in range (len(players)):
         print(players[i].get_prefs())
         
-#plotting
-def create_plot(p1_data, p2_data):
+"""
+def create_plot(p1_data, p2_data, p1_name, p2_name): plots the player's preferences over time using the 
+size of data points to represent probability frequency. Taken from Mr. Sahu and modified to take more arguments 
+and repeat all actions for two players, not one. 
+
+Args: 
+    p1_data: all of player 1's preferences over the 2250 games 
+    p2_data: all of player 2's preferences over the 2250 games 
+
+Returns: N/A
+"""
+def create_plot(p1_data, p2_data, p1_name, p2_name):
     p1stratsUnique = set(p1_data)
     p1_x_vals = list(p1stratsUnique)
     p1_sizes = []
@@ -111,14 +167,14 @@ def create_plot(p1_data, p2_data):
 
     fig, ax = plt.subplots()
 
-    ax.scatter(P1y, p1_x_vals, s=p1_sizes, c='blue', label='P1', alpha=0.3)
-    ax.scatter(P2y, p2_x_vals, s=p2_sizes, c='orange', label='P2', alpha=0.4)
+    ax.scatter(P1y, p1_x_vals, s=p1_sizes, c='blue', label= p1_name, alpha=0.3)
+    ax.scatter(P2y, p2_x_vals, s=p2_sizes, c='orange', label= p2_name, alpha=0.4)
 
     # option two
-    ax.set_xlabel('opera', fontsize=10)
+    ax.set_xlabel(options[1], fontsize=10)
     #options one
-    ax.set_ylabel('football', fontsize=10)
-    ax.set_title('battle of sexes')
+    ax.set_ylabel(options[0], fontsize=10)
+    ax.set_title(game_name)
 
     # show grid
     ax.grid(True)
@@ -133,16 +189,22 @@ def create_plot(p1_data, p2_data):
     p2LegendSize = [50]
     p2CollectionLegend = ax.scatter(p2LegendX, p2LegendY, s=p2LegendSize, c='orange', alpha=0.4)
 
-    plt.legend([p1CollectionLegend, p2CollectionLegend], ['P1', 'P2'])
+    plt.legend([p1CollectionLegend, p2CollectionLegend], [p1_name, p2_name])
 
     plt.show()
     
 
+#running the 2250 rounds 
 simulate()
+#choosing two of the the ten player's whoes preferences will be graphed
 p1 = 0
 p2 = 0
 while p1 == p2: 
-    p1 = random.randint(0, len(players))
-    p2 = random.randint(0, len(players))
-create_plot(players[p1].get_all_prefs()[0], players[p2].get_all_prefs()[0])
+    p1 = random.randint(0, len(players)-1)
+    p2 = random.randint(0, len(players)-1)
+    p1_name = f"player {p1+1}"
+    p2_name = f"player {p2+1}"
+#plot the chosen's player's preferences 
+create_plot(players[p1].get_all_prefs()[0], players[p2].get_all_prefs()[0], p1_name, p2_name)
+
 

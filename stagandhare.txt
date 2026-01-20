@@ -1,3 +1,4 @@
 2
-row: 3 3 0 2
-row two: 2 0 1 1
+Stag and Hare
+stag 3 3 0 2
+hare 2 0 1 1
